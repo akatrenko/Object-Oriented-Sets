@@ -247,7 +247,7 @@ object GoogleVsApple {
     if (topicList.isEmpty) {
       accu
     } else {
-      getTweetsByWords(topicList.tail, accu.union(TweetReader.allTweets.filter(tw => tw.text contains topicList.head)))
+      getTweetsByWords(topicList.tail, accu.union(TweetReader.allTweets.filter(tw => tw.text.contains(topicList.head))))
     }
   }
 
