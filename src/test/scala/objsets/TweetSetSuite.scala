@@ -47,9 +47,6 @@ class TweetSetSuite extends FunSuite {
 
   test("union: set4c and set4d") {
     new TestSets {
-      //set4c.foreach(println)
-      //set4d.foreach(println)
-      //set4c.union(set4d).foreach(println)
       assert(size(set4c.union(set4d)) === 4)
     }
   }

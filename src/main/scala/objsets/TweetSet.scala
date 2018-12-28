@@ -67,7 +67,9 @@ abstract class TweetSet {
     * Question: Should we implment this method here, or should it remain abstract
     * and be implemented in the subclasses?
     */
-  def mostRetweeted: Tweet = ???
+  def mostRetweeted: Tweet
+
+  def maxRetweet(m: Tweet): Tweet
 
   /**
     * Returns a list containing all tweets of this set, sorted by retweet count
@@ -78,7 +80,17 @@ abstract class TweetSet {
     * Question: Should we implment this method here, or should it remain abstract
     * and be implemented in the subclasses?
     */
-  def descendingByRetweet: TweetList = ???
+  def descendingByRetweet: TweetList = {
+    def iter(set: TweetSet, accu: TweetList): TweetList = {
+      if (set.size == 0) {
+        accu
+      } else {
+        iter(set.remove(set.mostRetweeted), new Cons(set.mostRetweeted, accu))
+      }
+    }
+
+    iter(this, Nil)
+  }
 
   /**
     * The following methods are already implemented
@@ -126,6 +138,10 @@ class Empty extends TweetSet {
   def size = 0
 
   def union(that: TweetSet): TweetSet = that
+
+  def mostRetweeted: Tweet = throw new java.util.NoSuchElementException
+
+  def maxRetweet(m: Tweet): Tweet = throw new java.util.NoSuchElementException
 }
 
 class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
@@ -149,13 +165,22 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
   }
 
   def union(that: TweetSet): TweetSet = {
-    if(right.size != 0) {
+    if (right.size != 0) {
       right.union(that.incl(elem))
     } else {
       that.incl(elem)
     }
   }
 
+  def mostRetweeted: Tweet = {
+    maxRetweet(elem)
+  }
+
+  def maxRetweet(m: Tweet): Tweet = {
+    if (right.size == 0) if (elem.retweets < m.retweets) elem else m
+    else if (elem.retweets < m.retweets) right.maxRetweet(elem)
+    else right.maxRetweet(m)
+  }
 
   /**
     * The following methods are already implemented
